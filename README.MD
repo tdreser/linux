@@ -18,3 +18,7 @@ voici mon adresse IP normale :
 
 On garde toujours 8 bits par octet, en complétant avec des zéros à gauche si besoin.
 
+
+# B1 Linux - TP2
+
+## I.1.A - Infos réseau CLI (Windows)
