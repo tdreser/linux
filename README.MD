@@ -33,7 +33,7 @@ On garde toujours 8 bits par octet, en complétant avec des zéros à gauche si 
 - 3. Modification d'adresse IP
 bien effectuée:
 
-[ll](./images/image%20copy.png)
+![ll](./images/image%20copy.png)
 
 
 
@@ -43,16 +43,16 @@ j'ai decidé de prendre Antonin comme duo pour ce TP, ici ce sera lui qui jouera
 
 je peux bien ping antonin :
 
-[ll](./images/image.png)
+![ll](./images/image.png)
 
 et voilà bien un ping 8.8.8.8 qui fonctionne sans carte WiFi :
 
-[ll](./images/image%20copy%202.png)
+![ll](./images/image%20copy%202.png)
 
 - 5. Petit chat privé
 je suis sur linux donc j'ai deja netcat, et la communication depuis le port 8888 est bien effectuée : 
 
-[ll](./images/mini_chat.png)
+![ll](./images/mini_chat.png)
 
 - 6. Wireshark
 
@@ -60,11 +60,11 @@ je suis sur linux donc j'ai deja netcat, et la communication depuis le port 8888
 voici ce qu'il se passe dans mon wireshark quand Antonin me ping : 
 
 
-[ll](./images/image%20copy%203.png)
+![ll](./images/image%20copy%203.png)
 
 voici ce qu'il se passe dans mon wireshark quand Antonin netcat : 
 
-[ll](./images/image%20copy%204.png)
+![ll](./images/image%20copy%204.png)
 
 
 - 7. Firewall 
