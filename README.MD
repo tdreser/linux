@@ -22,8 +22,85 @@ On garde toujours 8 bits par octet, en complétant avec des zéros à gauche si 
 # B1 Linux - TP2
 
 ## I. Exploration locale en solo
+### 1. Affichage d'informations sur la pile TCP/IP locale
+####  En ligne de commande : 
+
+![](./images/image%20copy%205.png)
+
+### Infos cartes réseau (CLI)
+
+**Commande utilisée :** `ip addr show`
+
+**Interface WiFi :**
+- Nom : `wlp3s0`
+- Adresse MAC : `00:11:22:33:44:55`
+- Adresse IP : `172.16.0.100/20`
+
+**Interface Ethernet :**
+- Nom : `enp2s0`
+- Adresse MAC : `aa:bb:cc:dd:ee:ff`
+- Adresse IP : `Aucune (interface DOWN)`
+
+**Calculs réseau WiFi :**
+
+- commande : ipcalc -n 172.16.0.100/20
+
+Address:   172.16.0.100         10101100.00010000.00000000.01100100
+           +---------------------+
+Netmask:   255.255.240.0        = 20                           [20 bits]
+Wildcard:  0.0.15.255           [12 bits]
+Nth-host:  16th-host            = 4096 hosts total
+=> Network: 172.16.0.0/20       10101100.00010000.00000000.00000000
+    Broadcast: 172.16.15.255    10101100.00010000.00001111.11111111
+    => Usable: 172.16.0.1 - 172.16.15.254 (4094 adresses utilisables)
+
+#### En graphique (GUI : Graphical User Interface)
 
 
+![](./images/image%20copy%206.png)
+
+à quoi sert la gateway dans le réseau d'Ingésup ?
+
+- Ma réponse :
+
+La gateway (passerelle) sert de point de sortie pour toutes les requêtes qui ne sont pas destinées au réseau local (LAN). À Ingésup, elle permet à ton ordinateur de communiquer avec des réseaux extérieurs, comme Internet, en acheminant tes paquets de données vers le routeur de l'école.
+
+### 2. Modifications des informations
+### A. Modification d'adresse IP - pt. 1
+
+Pour un réseau en 10.33.70.222 avec un masque 255.255.240.0 :
+
+
+    Adresse de réseau : 10.33.64.0
+
+    Adresse de broadcast : 10.33.79.255 
+
+    Première IP utilisable : 10.33.64.1
+
+    Dernière IP utilisable : 10.33.79.254 
+
+
+- j'ai ensuite modifié manuellement l'adresse ip de ma carte WIFI : 
+
+![](./images/image%20copy%207.png)
+
+### B. nmap
+
+pour cette partie la du tp, la connection de l'école ne fonctionnait plus donc j'ai du me faire un part de co avec mon téléphone , voici donc les informations :
+
+IP Address : 172.20.10.2
+
+Netmask : 255.255.255.240 (soit un /28)
+
+Default Route (Gateway) : 172.20.10.1
+
+Broadcast : 172.20.10.15
+
+- commande : nmap -sn 172.20.10.0/28
+
+![](./images/image%20copy%208.png)
+
+### C. Modification d'adresse IP - pt. 2
 
 ## II. Exploration locale en duo
 ### 1. Cablage effectué
@@ -34,7 +111,6 @@ On garde toujours 8 bits par octet, en complétant avec des zéros à gauche si 
 bien effectuée:
 
 ![ll](./images/image%20copy.png)
-
 
 
 ### 4. Utilisation d'un des deux comme gateway
@@ -67,4 +143,7 @@ voici ce qu'il se passe dans mon wireshark quand Antonin netcat :
 ![ll](./images/image%20copy%204.png)
 
 
-### 7. Firewall 
+### 7. Firewall
+
+
+## III. Manipulations d'autres outils/protocoles côté client
