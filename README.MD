@@ -147,3 +147,35 @@ voici ce qu'il se passe dans mon wireshark quand Antonin netcat :
 
 
 ## III. Manipulations d'autres outils/protocoles côté client
+
+## pour cette partie là du TP je suis sur la connection de chez moi
+
+### 1. DHCP
+- afficher l'adresse IP du serveur DHCP du réseau WiFi et sa date d'expiration :
+
+![](./images/image%20copy%209.png)
+
+L'adresse IP de mon serveur DHCP est 192.168.1.1
+
+![](./images/image%20copy%2010.png)
+
+et la date d'expiration du bail DHCP est donc le Vendredi 20 février 2026 à 08:50:53.
+
+####  Demandez une nouvelle adresse IP (en ligne de commande)
+
+``` nmcli device reapply wlo1 ```  --> est la commande pour demander une nouvelle adresse IP (en ligne de commande)
+
+
+
+### 2. DNS
+
+- voici les lookups et les reverses lookups demandés :
+
+![](./images/image%20copy%2011.png)
+
+- interpréter les résultats :
+
+L’outil dig a servi à interroger l'annuaire DNS. Les Lookups sur google.com et ynov.com ont traduit ces noms en adresses IP, prouvant que le DNS permet d'éviter de mémoriser des suites de chiffres. On note que Google renvoie plusieurs IPs pour la répartition de charge (Load Balancing). À l'inverse, les Reverse Lookups sur 78.78.21.21 et 92.16.54.88 n'ont rien renvoyé : cela signifie qu'aucun enregistrement PTR (nom associé à l'IP) n'a été configuré pour ces adresses, ce qui est courant pour des IPs de particuliers ou des serveurs sans identité publique.
+
+
+# B1 Linux - TP3
