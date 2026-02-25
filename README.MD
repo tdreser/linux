@@ -578,7 +578,7 @@ sudo nano /etc/ssh/sshd_config
 
 - Installez Fail2Ban et testez un bannissement après plusieurs tentatives échouées.
 
-![alt text](image.png)
+![alt text](./images/1.png)
 
 comme on peut le voir sur ce screen, on peut voir que je suis bien banni , car le serveur ne repond carrement plus là
 
@@ -586,7 +586,7 @@ ce bannissement a carrément entrainé un crash de ma page du terminal connecté
 
 j'ai donc du me déban : 
 
-![alt text](image-1.png)
+![alt text](./images/2.png)
 
 ## partie 6 - Tunnel SSH
 
@@ -595,25 +595,29 @@ j'ai donc du me déban :
 
 - Créez un tunnel distant pour permettre l’accès SSH au client via le serveur.
 
-![alt text](image-2.png)
+![alt text](./images/3.png)
 
 ## Partie 7 – Nginx et HTTPS
 
 - Installez Nginx sur la VM.
 
-![alt text](image-3.png)
+![alt text](./images/4.png)
 
 - Créez un site test dans /var/www/site-tp et un fichier index.html avec un message de bienvenue.
 
-![alt text](image-4.png)
+![alt text](./images/5.png)
 
 - Testez le site depuis le client :
 
-![alt text](image-5.png)
+![alt text](./images/6.png)
 
 
 ## Partie 8 – Firewall et permissions
 
-![alt text](image-6.png)
+![alt text](./images/7.png)
 
 ## Partie 9 – Validation finale
+
+Le serveur a été entièrement durci par la mise en place d'un accès SSH sur le port 2222 avec authentification exclusive par clés ED25519, sécurisé par Fail2Ban pour prévenir les intrusions. Le service Web Nginx héberge un site personnalisé dans /var/www/site-tp avec des permissions restrictives (chown www-data / chmod 755) et assure la confidentialité via un certificat SSL auto-signé. La continuité du service est garantie par une redirection automatique HTTP vers HTTPS et l'accès externe est filtré par le pare-feu UFW (Nginx Full), tout en restant administrable à distance via un tunnel SSH local (ports 8080/8443).
+
+# TP5 : pfSense – Bases d’un pare-feu
