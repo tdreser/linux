@@ -598,3 +598,18 @@ j'ai donc du me déban :
 ![alt text](image-2.png)
 
 ## Partie 7 – Nginx et HTTPS
+
+- Installez Nginx sur la VM.
+
+![alt text](image-3.png)
+
+- Créez un site test dans /var/www/site-tp et un fichier index.html avec un message de bienvenue.
+
+![alt text](image-4.png)
+
+- Testez le site depuis le client :
+
+![alt text](image-5.png)
+
+
+## Partie 8 – Firewall et permissions
