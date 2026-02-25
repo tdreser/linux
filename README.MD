@@ -521,3 +521,25 @@ Le Chiffrement :
 
 La signature : 
 - Garantit authenticité et intégrité, Utilise clé privée pour signer et permet la vérification avec clé publique
+
+# TP 4 solo
+## Partie 1 – Mise en place de l’environnement virtualisé
+
+- creation de la VM :
+![](./images/image1.png)
+
+![](./images/image2.png)
+
+## Partie 2 – Serveur SSH
+
+- Apres avoir installé le serveur ssh sur ma VM, voici une preuve que la connection ssh depuis mon terminal windows fonctionne :
+
+![](./images/image3.png)
+
+- Générez une clé SSH sur la machine cliente et copiez-la sur le serveur pour tester la connexion sans mot de passe.
+Pistes : ssh-keygen, ssh-copy-id :
+
+![](./images/image4.png)
+![](./images/image5.png)
+
+## 
