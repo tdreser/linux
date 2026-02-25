@@ -557,4 +557,44 @@ sudo nano /etc/ssh/sshd_config
 ![](./images/image6.png)
 - voici la validation de la connexion SSH sur le port 2222. L'accès est sécurisé par clé publique (demande de passphrase) et l'accès par mot de passe classique est désormais désactivé dans la configuration du serveur
 
+![alt text](./images/image7.png)
+
+## Partie 4 – Transfert de fichiers
+
+- SCP : scp fichier.txt serveur-tp:/home/etudiant/
+
+![alt text](./images/image8.png)
+
+- SFTP : explorez les commandes put, get, ls pour transférer et naviguer sur le serveur.
+![alt text](./images/image9.png)
+
+- RSYNC : synchronisez un dossier entre client et serveur.
+
+- Rsync n'étant pas natif sur l'hôte Windows, j'ai utilisé scp -r pour transférer l'intégralité du dossier Dossier_TP vers le serveur en utilisant l'alias SSH
+
+![alt text](./images/image10.png)
+
+## Partie 5 – Analyse des logs et sécurité
+
+- Installez Fail2Ban et testez un bannissement après plusieurs tentatives échouées.
+
 ![alt text](image.png)
+
+comme on peut le voir sur ce screen, on peut voir que je suis bien banni , car le serveur ne repond carrement plus là
+
+ce bannissement a carrément entrainé un crash de ma page du terminal connectée en ssh !
+
+j'ai donc du me déban : 
+
+![alt text](image-1.png)
+
+## partie 6 - Tunnel SSH
+
+- Créez un tunnel local pour accéder à un service web distant depuis la machine cliente.
+
+
+- Créez un tunnel distant pour permettre l’accès SSH au client via le serveur.
+
+![alt text](image-2.png)
+
+## Partie 7 – Nginx et HTTPS
