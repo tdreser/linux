@@ -542,4 +542,19 @@ Pistes : ssh-keygen, ssh-copy-id :
 ![](./images/image4.png)
 ![](./images/image5.png)
 
-## 
+## Partie 3 – Sécurisation SSH
+
+- désactiver l’accès root l'authentification par mot de passe.
+
+Changez le port par défaut
+depuis une interface avec  la commande 
+```
+sudo nano /etc/ssh/sshd_config
+``` 
+
+- Testez la connexion avec le nouveau port depuis la machine cliente.
+
+![](./images/image6.png)
+- voici la validation de la connexion SSH sur le port 2222. L'accès est sécurisé par clé publique (demande de passphrase) et l'accès par mot de passe classique est désormais désactivé dans la configuration du serveur
+
+![alt text](image.png)
