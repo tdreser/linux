@@ -613,3 +613,7 @@ j'ai donc du me déban :
 
 
 ## Partie 8 – Firewall et permissions
+
+![alt text](image-6.png)
+
+## Partie 9 – Validation finale
