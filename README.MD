@@ -620,4 +620,289 @@ j'ai donc du me déban :
 
 Le serveur a été entièrement durci par la mise en place d'un accès SSH sur le port 2222 avec authentification exclusive par clés ED25519, sécurisé par Fail2Ban pour prévenir les intrusions. Le service Web Nginx héberge un site personnalisé dans /var/www/site-tp avec des permissions restrictives (chown www-data / chmod 755) et assure la confidentialité via un certificat SSL auto-signé. La continuité du service est garantie par une redirection automatique HTTP vers HTTPS et l'accès externe est filtré par le pare-feu UFW (Nginx Full), tout en restant administrable à distance via un tunnel SSH local (ports 8080/8443).
 
-# TP5 : pfSense – Bases d’un pare-feu
+# TP5 solo
+Compte-rendu de TP : Administration Pare-feu pfSense
+Partie 1 – Prise en main et sécurisation
+1. Accès à l’interface
+Quelle est l’adresse IP du LAN ?
+
+Réponse : 192.168.1.1. C'est l'adresse de passerelle par défaut du réseau local.
+
+Quelle est l’adresse IP du WAN ?
+
+Réponse : C'est l'IP fournie par VirtualBox (ex: 10.0.2.15). Elle permet au pare-feu d'aller sur Internet.
+
+Pourquoi utilise-t-on HTTPS ?
+
+Réponse : Pour chiffrer la communication entre mon PC et pfSense. Cela empêche qu'un pirate ne vole mon mot de passe admin en "écoutant" le réseau.
+
+Pourquoi faut-il changer les identifiants par défaut ?
+
+Réponse : Parce que admin / pfsense est connu de tous. N'importe qui pourrait se connecter et modifier ma sécurité.
+
+Ce que j'ai fait : J'ai ouvert Firefox sur Ubuntu, tapé https://192.168.1.1, ignoré l'alerte de sécurité "Risque potentiel" (certificat auto-signé) et je me suis logué.
+
+2. Sécurisation de l’accès administrateur
+Où se gèrent les utilisateurs ?
+
+Réponse : Dans le menu System > User Manager.
+
+Qu’est-ce qu’un mot de passe robuste ?
+
+Réponse : Un mot de passe de plus de 12 caractères avec majuscules, minuscules, chiffres et symboles (ex: P@ssw0rd_pfSense!).
+
+Pourquoi sécuriser en priorité l’accès admin ?
+
+Réponse : Car l'admin a les pleins pouvoirs. S'il est piraté, toute l'infrastructure tombe.
+
+Ce que j'ai fait : Je suis allé dans System > User Manager, j'ai cliqué sur l'icône "crayon" à côté de l'utilisateur admin, j'ai tapé mon nouveau mot de passe et j'ai cliqué sur Save.
+
+Partie 2 – Interfaces réseau
+3. Vérification des interfaces
+Quelle interface permet l’accès Internet ?
+
+Réponse : L'interface WAN.
+
+Quelle interface correspond au réseau interne ?
+
+Réponse : L'interface LAN.
+
+Que se passerait-il si les interfaces étaient inversées ?
+
+Réponse : On perdrait l'accès à l'interface web (car le WAN bloque tout par défaut) et Internet ne fonctionnerait plus sur le LAN.
+
+Ce que j'ai fait : Je suis allé dans Interfaces > Assignments pour voir quelle carte (em0, em1) était liée au WAN et au LAN.
+
+Partie 3 – Configuration des services réseau
+4. DHCP
+Pourquoi utiliser DHCP plutôt qu’une IP fixe ?
+
+Réponse : Pour que les ordinateurs reçoivent leur config automatiquement sans erreur manuelle.
+
+Quelle plage d’adresses choisir ?
+
+Réponse : Une plage dans le réseau LAN, par exemple 192.168.1.10 à 192.168.1.100.
+
+Quelles adresses faut-il éviter d’inclure ?
+
+Réponse : L'adresse du pare-feu lui-même (192.168.1.1) et celles des serveurs fixes.
+
+Ce que j'ai fait : Je suis allé dans Services > DHCP Server, j'ai coché "Enable", rempli le champ "Range" (10 à 100) et validé. Sur Ubuntu, j'ai vérifié avec ip a.
+
+5. DNS
+Pourquoi un pare-feu peut-il jouer le rôle de DNS ?
+
+Réponse : Pour centraliser les requêtes et filtrer les sites dangereux directement à la racine.
+
+DNS en panne vs Ping 8.8.8.8 fonctionne ?
+
+Réponse : Le réseau marche (IP), mais la traduction des noms (ex: https://www.google.com/url?sa=E&source=gmail&q=google.com) est cassée. On ne peut plus naviguer par nom.
+
+Ce que j'ai fait : Je suis allé dans Services > DNS Resolver, j'ai vérifié qu'il était actif. Sur Ubuntu, j'ai tapé nslookup google.com pour tester.
+
+Partie 4 – Autoriser l’accès Internet
+6. Règles de pare-feu
+Quelle doit être la source ?
+
+Réponse : LAN net (tout le réseau local).
+
+Quelle doit être la destination ?
+
+Réponse : any (n'importe où sur Internet).
+
+Faut-il autoriser tous les protocoles ?
+
+Réponse : Non, idéalement juste le TCP (ports 80, 443) et le DNS (port 53).
+
+Ce que j'ai fait : Je suis allé dans Firewall > Rules, onglet LAN. J'ai cliqué sur "Add", mis "Action: Pass", "Source: LAN net", "Destination: any", puis j'ai cliqué sur Apply Changes.
+
+7. NAT
+Pourquoi le NAT est-il nécessaire ?
+
+Réponse : Pour transformer l'IP privée d'Ubuntu en l'IP WAN du pare-feu, car les IP privées ne peuvent pas circuler sur Internet.
+
+NAT automatique vs Manuel ?
+
+Réponse : L'automatique crée les règles seul. Le manuel permet de choisir précisément quelle machine sort avec quelle IP.
+
+Ce que j'ai fait : Je suis allé dans Firewall > NAT, onglet Outbound pour vérifier que le mode "Automatic" était bien sélectionné.
+
+Partie 5 – Filtrage
+8. Blocage d’un site spécifique
+Bloquer par IP ou domaine ?
+
+Réponse : Par domaine. Les IP des grands sites changent tout le temps.
+
+Que se passe-t-il en HTTPS ?
+
+Réponse : Le blocage fonctionne toujours car pfSense voit le nom du site dans le paquet de connexion (SNI).
+
+Pourquoi le blocage par IP est contourné ?
+
+Réponse : Car un site peut avoir plusieurs IP ou l'utilisateur peut passer par un VPN.
+
+Ce que j'ai fait : J'ai créé un Alias (Firewall > Aliases) avec l'adresse du site, puis une règle Block tout en haut de ma liste LAN avec cet alias comme destination.
+
+Partie 6 – Aller plus loin
+14. DMZ
+Qu'est-ce qu'une DMZ ?
+
+Réponse : Une zone isolée pour les serveurs exposés à Internet.
+
+Pourquoi isoler ?
+
+Réponse : Pour que si le serveur web est piraté, le pirate soit coincé là et ne puisse pas entrer dans mon réseau LAN privé.
+
+Ce que j'ai fait : J'ai activé une troisième interface dans VirtualBox, je l'ai nommée DMZ dans pfSense et j'ai créé des règles pour interdire le trafic de la DMZ vers le LAN.
+
+17. Sauvegarde / Restauration
+Pourquoi est-ce essentiel ?
+
+Réponse : Pour remettre le réseau en route en 2 minutes si le pare-feu tombe en panne ou si on fait une bêtise dans les réglages.
+
+Ce que j'ai fait : Je suis allé dans Diagnostics > Backup & Restore, j'ai cliqué sur "Download configuration as XML".
+
+# TP -- Mise en place d'un serveur OpenVPN sur Ubuntu Server
+
+## Partie 1 : Comprendre la PKI
+
+- À quoi sert une autorité de certification (CA) ?
+
+C'est le tiers de confiance. Elle sert à signer et valider les certificats des clients et du serveur. Si un certificat n'est pas signé par la CA, la connexion est refusée. C'est elle qui garantit que l'interlocuteur est bien celui qu'il prétend être.
+
+- Quelle différence entre clé privée et certificat ?
+
+Clé privée (.key) : Elle est secrète. Elle sert à déchiffrer les données et à prouver son identité. Elle ne doit jamais sortir de la machine.
+
+Certificat (.crt) : Il est public. Il contient la clé publique et l'identité de l'utilisateur. Il est transmis à l'autre pour qu'il puisse chiffrer les données vers vous.
+
+- Pourquoi un serveur VPN a-t-il besoin de certificats ?
+
+Pour assurer l'authentification mutuelle sans simple mot de passe. Cela permet au serveur de vérifier que le client est autorisé et au client d'être sûr qu'il se connecte au bon serveur (évite les attaques "Man-in-the-middle"). Les certificats servent aussi à établir la clé de chiffrement du tunnel.
+
+### Création de l'infrastructure Easy-RSA
+
+- Créer un environnement PKI avec : 
+Une CA
+Un certificat serveur
+Un certificat client
+Les paramètres Diffie-Hellman
+Une clé TLS supplémentaire
+
+![alt text](./images/image11.png)
+
+- Où Easy-RSA crée-t-il ses fichiers ?
+
+Dans le répertoire ~/openvpn-ca/pki/ sur ta VM.
+
+- Que contient le dossier pki/ ?
+
+La CA (ca.crt), les clés privées (dossier private/), les certificats signés (dossier issued/) et les fichiers de sécurité comme le DH.
+
+- Quelle est la différence entre gen-req et sign-req ?
+
+gen-req génère une demande d'identité (non certifiée). sign-req est l'approbation de cette demande par la CA pour créer le certificat officiel.
+
+- Que se passe-t-il si vous oubliez de signer un certificat ?
+
+Le fichier .crt n'est pas généré et le serveur OpenVPN rejettera la connexion car l'identité ne pourra pas être vérifiée.
+
+## Partie 2 : Configuration du serveur OpenVPN
+
+- Créer un fichier de configuration serveur.
+/etc/openvpn/server/server.conf avec les elements suivants : 
+
+![alt text](image.png)
+
+- Que signifie dev tun ?
+
+C'est une interface réseau virtuelle de type Tunnel (couche 3 / IP). Elle permet de router uniquement des paquets IP, ce qui est plus léger et performant pour un VPN.
+
+- Quelle différence entre UDP et TCP pour un VPN ?
+
+UDP (recommandé) est plus rapide car il n'attend pas d'accusé de réception des paquets. TCP est plus lent mais plus fiable dans les environnements où le réseau est très instable ou censuré.
+
+- Quelle plage IP choisir pour le VPN ? Pourquoi ?
+
+Une plage privée (ex: 10.8.0.0/24). On la choisit pour éviter tout conflit avec le réseau local physique de l'utilisateur et pour isoler le trafic VPN du reste d'Internet.
+
+## Routage et NAT
+
+- Activer le forwarding (Routage au niveau du noyau)
+
+- Mettre en place une règle NAT pour avoir l'accès internet depuis le vpn
+
+![alt text](./images/image-1.png)
+
+- pour vérifier que c'est fonctionnel : 
+
+- Où se configure le paramètre ip_forward ?
+
+Dans le fichier /etc/sysctl.conf.
+
+- Quelle commande permet d'afficher les règles NAT actuelles ?
+
+sudo iptables -t nat -L -n -v.
+
+- Pourquoi faut-il "masquerader" le réseau VPN ?
+
+Pour que le serveur remplace l'IP privée du client (non reconnue sur Internet) par sa propre IP publique afin de permettre la navigation web.
+
+
+## Démarrage et analyse du service
+
+- malheureusement , j'ai eu des problemes lors de la réalisation de ces étapes :  
+>Démarrer le service OpenVPN
+
+>Vérifier son état
+
+![alt text](./images/image-2.png)
+
+- je dois donc rentrer dans cette condition : 
+### Si le service échoue :
+
+- Quelle commande permet d'afficher les logs système d'un service ?
+
+La commande est : sudo journalctl -u openvpn-server@server.
+(On ajoute souvent -n 50 pour voir les 50 dernières lignes ou -f pour voir les logs arriver en direct).
+
+- Quelle est la différence entre status et journalctl ?
+
+systemctl status : Donne un résumé rapide de l'état du service (est-il lancé, depuis quand, quel est son PID) et les 10 dernières lignes de logs.
+
+journalctl : C'est l'outil de consultation de l'ensemble des journaux du système. Il permet de voir tout l'historique des erreurs, même anciennes, de façon très détaillée.
+
+- Les chemins vers les certificats sont-ils corrects ?
+
+Dans ton cas, non, c'est probablement là qu'est l'erreur. Ton fichier server.conf cherche les fichiers dans /etc/openvpn/server/, mais tes certificats sont restés dans ton dossier personnel ~/openvpn-ca/pki/.
+
+- Pourquoi ça n'allait pas ?
+
+Erreur constatée : cp: impossible d'évaluer ... server.crt.
+
+Cause : Lors de la phase PKI (Partie 1), le certificat a été généré sous le nom client1 au lieu de server.
+
+Solution de diagnostic : L'utilisation de ls dans les répertoires de la PKI a permis de voir que le fichier attendu par la configuration n'existait pas sous ce nom.
+
+![](./images/image-3.png)
+## Partie 3 : Création du profil client
+
+- Pour le CA :
+sudo cat /etc/openvpn/server/ca.crt
+
+- Pour le Certificat :
+sudo cat /etc/openvpn/server/server.crt
+
+- Pour la Clé Privée :
+sudo cat /etc/openvpn/server/server.key
+
+- Pour la Clé TLS-Auth :
+sudo cat /etc/openvpn/server/ta.key
+
+![alt text](./images/image-4.png)    
+
+- apres avoir rempli mon dossier ovpn avec les informations demandées, et avoir changé son extension en .ovpn, j'ai bien un visuel du vpn dans l'application Openvpn:
+
+![alt text](./images/image-5.png)
+
+![alt text](./images/image-6.png)
